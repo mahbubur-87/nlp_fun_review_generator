@@ -1,7 +1,8 @@
 import 'dart:core';
 import 'dart:io';
+import 'package:mysql1/mysql1.dart';
 
-void main() {
+void main() async {
 
   var generator = Generator();
   print("==: Product Review Generator :==");
@@ -10,12 +11,38 @@ void main() {
   int templateType = generator.takeTemplateType(templateName);
 
   String review = generator.convertTemplateToReview(templateName, templateType);
-  print("==: Generated Review :==\n$review");
+  print("==: Generated Review :==");
 
+  print("Title := " + generator.reviewTitle);
+  print("$review");
+
+  // Generated Review into DB Storage
+  // Open a connection
+  final conn = await MySqlConnection.connect(ConnectionSettings(host: 'localhost',
+                                                                port: 3306,
+                                                                user: 'mahbubur',
+                                                                password: 'Dark_Fantasy_2021',
+                                                                db: 'db_DRIFT'));
+
+  // Insert some data
+  var productResult = await conn.query('INSERT INTO tbl_product (title, price, brand, seller) VALUES (?, ?, ?, ?)', ['test', 24.02, 'Amazon', 'Amazon']);
+  print('Inserted row id=${productResult.insertId}');
+
+  var reviewResult = await conn.query('INSERT INTO tbl_review (header, body, product_id) VALUES (?, ?, ?)', [generator.reviewTitle, review, productResult.insertId]);
+  print('Inserted row id=${reviewResult.insertId}');
+
+  // Finally, close the connection
+  await conn.close();
 }
 
 class Generator {
+
+  String header = "";
   Map<String, Map<int, String>> template = Map<String, Map<int, String>>();
+
+  String get reviewTitle {
+    return header;
+  }
 
   Generator() {
     template.putIfAbsent("3_Paragraph", () {
@@ -159,6 +186,13 @@ class Generator {
 
       String value = stdin.readLineSync();
       replacements.update(key, (v) => v = value );
+    }
+
+    if (replacements.isEmpty) {
+      print("==: Enter Reivew Title :==");
+      header = stdin.readLineSync();
+    } else {
+      header = replacements["<product_name_with_some_text>"];
     }
 
     replacements.forEach((key, value) => review = review.replaceAll(key, value));
