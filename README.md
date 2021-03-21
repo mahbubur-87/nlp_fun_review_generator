@@ -1,6 +1,21 @@
-# review_generator_app
+# DRIFT - A Review Generator Application
 
-A new Flutter application.
+review_generator_app
+
+DRIFT means :==
+D = Data, Dynamic
+R = Review
+I = Intelligent
+F = Faster
+T = Testing
+
+So The Power of DRIFT means :==
+More Data
+More Dynamic
+More Review
+More Intelligent
+More Faster
+More Testing
 
 ## Getting Started
 
