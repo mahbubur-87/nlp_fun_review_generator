@@ -58,7 +58,7 @@ class Generator {
 
       types.putIfAbsent(3, () => "This product is rated 5 stars because it has some additional features compared to other <product_category>. These extra features are <product_feature_1>, <product_feature_2> and <product_feature_3>.\n\n" +
       "There are no issues with the product and the product fits properly on my <product_place_where_it_is_used>. However, at first it is not <product_negative_text_1>. Later it is successful with the help of <product_feature_4> provided by the seller, so thanks to the seller for the <product_feature_4> to <product_feature_4_adjective_1>.\n\n" +
-      "Because of the smart functionalities and better quality, I like this product very much and at the same time I recommend future buyers to buy this product for their <product_category>.");
+      "Because of the smart functionalities and better quality, I like this product very much and at the same time I recommend future buyers to buy this product for their <product_place_where_it_is_used>.");
 
       types.putIfAbsent(4, () => "Because of the smart and sexy look with excellent <product_feature_1>, I give this product 5 stars. Compared to other <product_category>, this product has a <product_feature_2>, is <product_feature_2_adjective_1>, is <product_feature_2_adjective_2>, and has a <product_feature_3>.\n\n" +
       "There are no issues with the product, and the product fits my <product_place_where_it_is_used> just right. In addition, this product includes <product_feature_4> for <product_feature_4_adjective_1>.\n\n" +
@@ -173,6 +173,9 @@ class Generator {
     Map<String, String> replacements = Map<String, String>();
 
     print("==: Review Template :==\n$review");
+    print("==: Enter Reivew Title :==");
+
+    header = stdin.readLineSync();
     print("==: Enter Values :==");
 
     String key;
@@ -186,13 +189,6 @@ class Generator {
 
       String value = stdin.readLineSync();
       replacements.update(key, (v) => v = value );
-    }
-
-    if (replacements.isEmpty) {
-      print("==: Enter Reivew Title :==");
-      header = stdin.readLineSync();
-    } else {
-      header = replacements["<product_name_with_some_text>"];
     }
 
     replacements.forEach((key, value) => review = review.replaceAll(key, value));
