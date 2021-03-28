@@ -25,10 +25,14 @@ void main() async {
                                                                 db: 'db_DRIFT'));
 
   // Insert some data
-  var productResult = await conn.query('INSERT INTO tbl_product (title, price, brand, seller) VALUES (?, ?, ?, ?)', ['test', 24.02, 'Amazon', 'Amazon']);
+  var productResult = await conn.query('INSERT INTO tbl_product (title, price, category, brand, seller) VALUES (?, ?, ?, ?, ?)',
+                                        [generator.productInfo["title"], double.parse(generator.productInfo["price"]),
+                                          generator.productInfo["category"], generator.productInfo["brand"],
+                                          generator.productInfo["seller"]]);
   print('Inserted row id=${productResult.insertId}');
 
-  var reviewResult = await conn.query('INSERT INTO tbl_review (header, body, product_id) VALUES (?, ?, ?)', [generator.reviewTitle, review, productResult.insertId]);
+  var reviewResult = await conn.query('INSERT INTO tbl_review (header, body, product_id, submit_date) VALUES (?, ?, ?, ?)',
+                                      [generator.reviewTitle, review, productResult.insertId, DateTime.now()]);
   print('Inserted row id=${reviewResult.insertId}');
 
   // Finally, close the connection
@@ -39,9 +43,14 @@ class Generator {
 
   String header = "";
   Map<String, Map<int, String>> template = Map<String, Map<int, String>>();
+  Map<String, String> product = Map<String, String>();
 
   String get reviewTitle {
     return header;
+  }
+
+  Map<String, String> get productInfo {
+    return product;
   }
 
   Generator() {
@@ -192,6 +201,33 @@ class Generator {
     }
 
     replacements.forEach((key, value) => review = review.replaceAll(key, value));
+
+    if (replacements.containsKey("<product_name_with_some_text>")) {
+      product.update("title", (value) => value = replacements["<product_name_with_some_text>"]);
+    } else {
+      print("Product Title := ");
+      product.update("title", (value) => value = stdin.readLineSync());
+    }
+
+    if (replacements.containsKey("<product_category>")) {
+      product.update("category", (value) => value = replacements["<product_category>"]);
+    } else {
+      print("Product Category := ");
+      product.update("category", (value) => value = stdin.readLineSync());
+    }
+
+    if (replacements.containsKey("<product_brand_name>")) {
+      product.update("brand", (value) => value = replacements["<product_brand_name>"]);
+    } else {
+      print("Product Brand := ");
+      product.update("brand", (value) => value = stdin.readLineSync());
+    }
+
+    print("Product Price :=");
+    product.update("price", (value) => value = stdin.readLineSync());
+
+    print("Product Seller :=");
+    product.update("seller", (value) => value = stdin.readLineSync());
 
     return review;
   }
