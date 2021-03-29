@@ -4,6 +4,9 @@ import 'package:mysql1/mysql1.dart';
 
 void main() async {
 
+  var today = DateTime.now();
+  print(DateTime.utc(today.year, today.month, today.day, today.hour, today.minute, today.second));
+
   var generator = Generator();
   print("==: Product Review Generator :==");
 
@@ -32,7 +35,7 @@ void main() async {
   print('Inserted row id=${productResult.insertId}');
 
   var reviewResult = await conn.query('INSERT INTO tbl_review (header, body, product_id, submit_date) VALUES (?, ?, ?, ?)',
-                                      [generator.reviewTitle, review, productResult.insertId, DateTime.now()]);
+                                      [generator.reviewTitle, review, productResult.insertId, DateTime.utc(today.year, today.month, today.day, today.hour, today.minute, today.second)]);
   print('Inserted row id=${reviewResult.insertId}');
 
   // Finally, close the connection
@@ -203,31 +206,31 @@ class Generator {
     replacements.forEach((key, value) => review = review.replaceAll(key, value));
 
     if (replacements.containsKey("<product_name_with_some_text>")) {
-      product.update("title", (value) => value = replacements["<product_name_with_some_text>"]);
+      product.putIfAbsent("title", () => replacements["<product_name_with_some_text>"]);
     } else {
       print("Product Title := ");
-      product.update("title", (value) => value = stdin.readLineSync());
+      product.putIfAbsent("title", () => stdin.readLineSync());
     }
 
     if (replacements.containsKey("<product_category>")) {
-      product.update("category", (value) => value = replacements["<product_category>"]);
+      product.putIfAbsent("category", () => replacements["<product_category>"]);
     } else {
       print("Product Category := ");
-      product.update("category", (value) => value = stdin.readLineSync());
+      product.putIfAbsent("category", () => stdin.readLineSync());
     }
 
     if (replacements.containsKey("<product_brand_name>")) {
-      product.update("brand", (value) => value = replacements["<product_brand_name>"]);
+      product.putIfAbsent("brand", () => replacements["<product_brand_name>"]);
     } else {
       print("Product Brand := ");
-      product.update("brand", (value) => value = stdin.readLineSync());
+      product.putIfAbsent("brand", () => stdin.readLineSync());
     }
 
     print("Product Price :=");
-    product.update("price", (value) => value = stdin.readLineSync());
+    product.putIfAbsent("price", () => stdin.readLineSync());
 
     print("Product Seller :=");
-    product.update("seller", (value) => value = stdin.readLineSync());
+    product.putIfAbsent("seller", () => stdin.readLineSync());
 
     return review;
   }

@@ -32,7 +32,7 @@ CREATE TABLE `tbl_product` (
   `shop_name` varchar(45) NOT NULL DEFAULT 'Amazon',
   `category` varchar(45) NOT NULL DEFAULT 'missing',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +41,7 @@ CREATE TABLE `tbl_product` (
 
 LOCK TABLES `tbl_product` WRITE;
 /*!40000 ALTER TABLE `tbl_product` DISABLE KEYS */;
-INSERT INTO `tbl_product` VALUES (1,'Echo Studio - Smart high fidelity speaker with 3D audio and Alexa',169.99,'Euro','Amazon','Amazon EU Sarl','Amazon','electronic_device.smart_speaker'),(2,'Ockered Battery for iPhone SE, High Capacity Replacement Battery with Tool Kit and Repair Kit, Battery Replacement Instructions, Compatible with Apple SE, 24 Months Warranty',12.19,'Euro','Ockered','Patricia Ann Effendi','Amazon','replacement_parts.battery'),(3,'Enteenly LED Strip 3 m LED TV Backlight Suitable for 40-60 Inch TVs and PC, App Control and Remote Control, RGB, USB Operated',11.99,'Euro','Enteenly','Oobserver center','Amazon','decorative_lighting.led_strips');
+INSERT INTO `tbl_product` VALUES (1,'Echo Studio - Smart high fidelity speaker with 3D audio and Alexa',169.99,'Euro','Amazon','Amazon EU Sarl','Amazon','electronic_device.smart_speaker'),(2,'Ockered Battery for iPhone SE, High Capacity Replacement Battery with Tool Kit and Repair Kit, Battery Replacement Instructions, Compatible with Apple SE, 24 Months Warranty',12.19,'Euro','Ockered','Patricia Ann Effendi','Amazon','replacement_parts.battery'),(3,'Enteenly LED Strip 3 m LED TV Backlight Suitable for 40-60 Inch TVs and PC, App Control and Remote Control, RGB, USB Operated',11.99,'Euro','Enteenly','Oobserver center','Amazon','decorative_lighting.led_strips'),(4,'Doctor CheckUp at Dr. med. Franziska Schindler',46.57,'Euro','Doctena','Dr. med. Franziska Schindler','Doctena','health.physician');
 /*!40000 ALTER TABLE `tbl_product` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -85,10 +85,8 @@ CREATE TABLE `tbl_review` (
   `submit_date` datetime DEFAULT NULL,
   `accept_date` datetime DEFAULT NULL,
   `locale` varchar(6) NOT NULL DEFAULT 'en_US',
-  PRIMARY KEY (`id`),
-  KEY `fk_tbl_review_1_idx` (`product_id`),
-  CONSTRAINT `fk_tbl_review_1` FOREIGN KEY (`product_id`) REFERENCES `tbl_product` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -97,7 +95,7 @@ CREATE TABLE `tbl_review` (
 
 LOCK TABLES `tbl_review` WRITE;
 /*!40000 ALTER TABLE `tbl_review` DISABLE KEYS */;
-INSERT INTO `tbl_review` VALUES (1,'Smart Alexa with 3D sounds','I love the Amazon brand because it maintains product quality.\n\nI rate this product 5 stars because this Dolby Digital speaker with 3D audio and Alexa has 3 dimentional sound that is very dynamic bass. It is also a perfect control through vocal and smart playback setting Echo Studio.\n\nWhen I was looking for Echo Studio, I looked at this product along with other similar products. The useful features of this product among other similar products are its price and built-in SmartHome hub. The price is perfect with its brand and the outlook is smart and beautiful.\n\nI have been using the Echo Studio and Alexa regularly in my master bedroom for 60 days. Another feature worth mentioning is the privacy protection and the Alexa service is hassle free.\n\nI really like this product because it is high quality and the service is satisfactory according to the product description. Therefore, I recommend others to buy this product.','ACCEPT',1,'2021-03-20 23:30:00','2021-03-22 10:12:00','en_US'),(2,'High quality iPhone replacement Battery','This product is rated 5 stars because it has some additional features compared to other Batteries. These extra features are High Capacity, Tool Kit and Repair Kit.\n\nThere are no issues with the product and the product fits properly on my iPhone. However, at first it is not working. Later it is successful with the help of Battery Replacement Instructions provided by the seller, so thanks to the seller for the Battery Replacement Instructions to be attached with the package.\n\nBecause of the smart functionalities and better quality, I like this product very much and at the same time I recommend future buyers to buy this product for their iPhone.','ACCEPT',2,'2021-03-24 09:14:00','2021-03-25 21:37:00','en_US'),(3,'Smart and Sexy LED Strips','Because of the smart and sexy look with excellent App Control, I give this product 5 stars. Compared to other LED Strips, this product has a Remote Control, RGB, USB Operated, is usefull, is good for decoration, and has a low electricity consumption.\n\nThere are no issues with the product, and the product fits my Wall Mirror just right. In addition, this product includes built-in high-sensitivity microphone, 16 million colours for brightness.\n\nBecause of the smart functionalities and better quality, I really like this product and recommend future buyers to buy this product.','ACCEPT',3,'2021-03-24 09:14:00','2021-03-25 21:46:48','en_US');
+INSERT INTO `tbl_review` VALUES (1,'Smart Alexa with 3D sounds','I love the Amazon brand because it maintains product quality.\n\nI rate this product 5 stars because this Dolby Digital speaker with 3D audio and Alexa has 3 dimentional sound that is very dynamic bass. It is also a perfect control through vocal and smart playback setting Echo Studio.\n\nWhen I was looking for Echo Studio, I looked at this product along with other similar products. The useful features of this product among other similar products are its price and built-in SmartHome hub. The price is perfect with its brand and the outlook is smart and beautiful.\n\nI have been using the Echo Studio and Alexa regularly in my master bedroom for 60 days. Another feature worth mentioning is the privacy protection and the Alexa service is hassle free.\n\nI really like this product because it is high quality and the service is satisfactory according to the product description. Therefore, I recommend others to buy this product.','ACCEPT',1,'2021-03-20 23:30:00','2021-03-22 10:12:00','en_US'),(2,'High quality iPhone replacement Battery','This product is rated 5 stars because it has some additional features compared to other Batteries. These extra features are High Capacity, Tool Kit and Repair Kit.\n\nThere are no issues with the product and the product fits properly on my iPhone. However, at first it is not working. Later it is successful with the help of Battery Replacement Instructions provided by the seller, so thanks to the seller for the Battery Replacement Instructions to be attached with the package.\n\nBecause of the smart functionalities and better quality, I like this product very much and at the same time I recommend future buyers to buy this product for their iPhone.','ACCEPT',2,'2021-03-24 09:14:00','2021-03-25 21:37:00','en_US'),(3,'Smart and Sexy LED Strips','Because of the smart and sexy look with excellent App Control, I give this product 5 stars. Compared to other LED Strips, this product has a Remote Control, RGB, USB Operated, is usefull, is good for decoration, and has a low electricity consumption.\n\nThere are no issues with the product, and the product fits my Wall Mirror just right. In addition, this product includes built-in high-sensitivity microphone, 16 million colours for brightness.\n\nBecause of the smart functionalities and better quality, I really like this product and recommend future buyers to buy this product.','ACCEPT',3,'2021-03-24 09:14:00','2021-03-25 21:46:48','en_US'),(4,'Nice, Friendly, Well English Speaking Doctor','5 stars rating for this product because\n- Easily get an appointment through Doctena\n- Relaxing environment\n- Patient caring\n- Take time to hear problems of the patient\n- Price is affordable\n- Give a perfect solution for each problem\n\nConsidering above attractive features and multi-purpose functionalities, I like this product and give personal recommendation to buy this product.','SUBMIT',4,'2021-03-29 16:45:35',NULL,'en_US');
 /*!40000 ALTER TABLE `tbl_review` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -165,4 +163,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-03-28 21:13:38
+-- Dump completed on 2021-03-29 17:06:57
