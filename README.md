@@ -48,23 +48,28 @@ Calendar Event: 24 March, 2021 6:30 AM
 So at that time the user is performing morning Jogging in the park and taking fresh air. On the time of the event, the voice assistant of user's mobile says to user 
 
 Vocal Assistant: "Sir, I need to do product review on your behalf. Do you want to do this?"
+
 User: "Sure, go ahead."
 
 Vocal Assistant: "Thank you, Sir for your confirmation. Now please, tell me your password for Amazon."
+
 User: "xxxxxx"
 
 Vocal Assistant: "Thank you, please wait and with a moment, you will get an SMS containing OTP. After received, please tell to me."
 Waiting for OTP.
 
 User: "Hey Mr. Assistant, please take Amazon OTP: xxxxxx."
+
 Vocal Assistant: "Sir, thank you, can you please tell me again for cross validation, please? Hope you will understand."
 
 User: "xxxxxx" 
+
 Vocal Assistant: "Thank you Sir for your kind cooperation."
 
 After few moments later, the Vocal Assistant replied to the User 'B'
 
 Vocal Assistant: "Sir, product review successfully submitted and waiting for confirmation."
+
 User: "Good Job, Appreciate That."
 
 Vocal Assistant: "My pleasure and always at your service."
