@@ -33,25 +33,25 @@ More Testing;
 
 -----------------------------------------------------
 
-==:Future Plans:==
-Develop a mobile application which has intelligence definately AI-Powered automated Text generation for Product Reviews.
-Here are some future features that the will have:
+==: Future Plans :==
+Develop a UI-Less Mobile Application that has intelligence definitely AI-Powered automated Text generation for Product Reviews.
+Here are some future features that they will have:
 
 1. Voice Communication using NLP (Connected with Calendar Events and Online Shop Authentication)
-2. Generate and Submit Product Review from application's knowledge base(vocabulary and product details)
+2. Generate and Submit Product Review from the application's knowledge base(vocabulary and product details)
 
 Example Use Case:
 A User named 'B' set a calendar event for writing and submitting two product reviews.
 
 Calendar Event: 24 March, 2021 6:30 AM
 
-So at that time the user is performing morning Jogging in the park and taking fresh air. On the time of the event, the voice assistant of user's mobile says to user 
+So at that time, the user is performing morning Jogging in the park and taking fresh air. On the time of the event, the voice assistant of the user's mobile says to the user 
 
-Vocal Assistant: "Sir, I need to do product review on your behalf. Do you want to do this?"
+Vocal Assistant: "Sir, I need to do a product review on your behalf. Do you want to do this?"
 
 User: "Sure, go ahead."
 
-Vocal Assistant: "Thank you, Sir for your confirmation. Now please, tell me your password for Amazon."
+Vocal Assistant: "Thank you, Sir, for your confirmation. Now please, tell me your password for Amazon."
 
 User: "xxxxxx"
 
@@ -60,7 +60,7 @@ Waiting for OTP.
 
 User: "Hey Mr. Assistant, please take Amazon OTP: xxxxxx."
 
-Vocal Assistant: "Sir, thank you, can you please tell me again for cross validation, please? Hope you will understand."
+Vocal Assistant: "Sir, thank you, can you please tell me again for cross-validation, please? Hope you will understand."
 
 User: "xxxxxx" 
 
