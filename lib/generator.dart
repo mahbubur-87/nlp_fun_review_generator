@@ -19,7 +19,7 @@ void main() async {
   print("==: Generated Review :==");
 
   print("Title := " + generator.reviewTitle);
-  print("$review");
+  print("$review\n");
 
   // Generated Review into DB Storage
   // Open a connection
@@ -62,8 +62,8 @@ void main() async {
 
   print('Inserted row id=${reviewTypeId}');
 
-  var reviewResult = await conn.query('INSERT INTO tbl_review (header, body, product_id, submit_date) VALUES (?, ?, ?, ?)',
-                                      [generator.reviewTitle, review, productResult.insertId, DateTime.utc(today.year, today.month, today.day, today.hour, today.minute, today.second)]);
+  var reviewResult = await conn.query('INSERT INTO tbl_review (header, body, ' + (generator.reviewType == 'product' ? 'product_id' : 'service_id') + ', submit_date) VALUES (?, ?, ?, ?)',
+                                      [generator.reviewTitle, review, reviewTypeId, DateTime.utc(today.year, today.month, today.day, today.hour, today.minute, today.second)]);
   print('Inserted row id=${reviewResult.insertId}');
 
   // Finally, close the connection
@@ -72,8 +72,8 @@ void main() async {
 
 class Generator {
 
-  String type = "";
-  String header = "";
+  String type, header, tmplName;
+  int tmplType;
   Map<String, Map<int, String>> template = Map<String, Map<int, String>>();
   Map<String, String> product = Map<String, String>();
   Map<String, String> service = Map<String, String>();
@@ -82,12 +82,32 @@ class Generator {
     return type;
   }
 
+  set reviewType(String type) {
+    this.type = type;
+  }
+
   String get reviewTitle {
     return header;
   }
 
+  set reviewTitle(String title) {
+    this.header = title;
+  }
+
+  set templateName(String name) {
+    this.tmplName = name;
+  }
+
+  set templateType(int type) {
+    this.tmplType = type;
+  }
+
   Map<String, String> get productInfo {
     return product;
+  }
+
+  set productInfo(Map<String, String> product) {
+    this.product = product;
   }
 
   Map<String, String> get serviceInfo {
@@ -227,7 +247,7 @@ class Generator {
     String review = this.template[templateName][templateType];
     Map<String, String> replacements = Map<String, String>();
 
-    replacements.putIfAbsent("<review_type>", () => this.type);
+    review = review.replaceAll("<review_type>", this.type);
 
     print("==: Review Template :==\n$review");
     print("==: Enter Reivew Title :==");
@@ -273,21 +293,21 @@ class Generator {
   }
 
   void takeProductInfo(String title, String category, String brand) {
-    if (title.isNotEmpty) {
+    if (title != null && title.isNotEmpty) {
       product.putIfAbsent("title", () => title);
     } else {
       print("Product Title := ");
       product.putIfAbsent("title", () => stdin.readLineSync());
     }
 
-    if (category.isNotEmpty) {
+    if (category != null && category.isNotEmpty) {
       product.putIfAbsent("category", () => category);
     } else {
       print("Product Category := ");
       product.putIfAbsent("category", () => stdin.readLineSync());
     }
 
-    if (brand.isNotEmpty) {
+    if (brand != null && brand.isNotEmpty) {
       product.putIfAbsent("brand", () => brand);
     } else {
       print("Product Brand := ");
@@ -302,14 +322,14 @@ class Generator {
   }
 
   void takeServiceInfo(String title, String category, String providerPlatform) {
-    if (title.isNotEmpty) {
+    if (title != null && title.isNotEmpty) {
       service.putIfAbsent("title", () => title);
     } else {
       print("Product Title := ");
       service.putIfAbsent("title", () => stdin.readLineSync());
     }
 
-    if (category.isNotEmpty) {
+    if (category != null && category.isNotEmpty) {
       service.putIfAbsent("category", () => category);
     } else {
       print("Product Category := ");
@@ -319,7 +339,7 @@ class Generator {
     print("Provider :=");
     service.putIfAbsent("provider", () => stdin.readLineSync());
 
-    if (providerPlatform.isNotEmpty) {
+    if (providerPlatform != null && providerPlatform.isNotEmpty) {
       service.putIfAbsent("provider_platform", () => providerPlatform);
     } else {
       print("Provider Platform := ");
@@ -344,4 +364,25 @@ class Generator {
     print("Map Coordinates :=");
     service.putIfAbsent("map_coordinates", () => stdin.readLineSync());
   }
+
+  Map<String, String> getReviewTemplateParameters() {
+    String review = this.template[tmplName][tmplType];
+    Map<String, String> replacements = Map<String, String>();
+
+    String key;
+    RegExp(r"(<product\w+>)+").allMatches(review).forEach((match) {
+      key = review.substring(match.start, match.end).trim();
+      replacements.putIfAbsent(key, () => "");
+    });
+
+    return replacements;
+  }
+
+  String generateReview(Map<String, String> replacements) {
+    String review = this.template[tmplName][tmplType];
+    review = review.replaceAll("<review_type>", this.type);
+    replacements.forEach((key, value) => review = review.replaceAll(key, value));
+    return review;
+  }
+
 }
