@@ -4,9 +4,6 @@ import 'package:mysql1/mysql1.dart';
 
 void main() async {
 
-  var today = DateTime.now();
-  print(DateTime.utc(today.year, today.month, today.day, today.hour, today.minute, today.second));
-
   var generator = Generator();
   print("==: Review Generator :==");
 
@@ -21,53 +18,7 @@ void main() async {
   print("Title := " + generator.reviewTitle);
   print("$review\n");
 
-  // Generated Review into DB Storage
-  // Open a connection
-  final conn = await MySqlConnection.connect(ConnectionSettings(host: 'localhost',
-                                                                port: 3306,
-                                                                user: 'mahbubur',
-                                                                password: 'Dark_Fantasy_2021',
-                                                                db: 'db_DRIFT'));
-
-  // Insert some data
-  int reviewTypeId;
-  if (generator.reviewType == "product") {
-    var productResult = await conn.query(
-        'INSERT INTO tbl_product (title, price, category, brand, seller) VALUES (?, ?, ?, ?, ?)',
-        [
-          generator.productInfo["title"],
-          double.parse(generator.productInfo["price"]),
-          generator.productInfo["category"],
-          generator.productInfo["brand"],
-          generator.productInfo["seller"]
-        ]);
-    reviewTypeId = productResult.insertId;
-  } else if (generator.reviewType == "service") {
-    var serviceResult = await conn.query(
-        'INSERT INTO tbl_service (title, provider, provider_platform, category, street, house_number, postal_code, phone, website, map_coordinates) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [
-          generator.serviceInfo["title"],
-          generator.serviceInfo["provider"],
-          generator.serviceInfo["provider_platform"],
-          generator.serviceInfo["category"],
-          generator.serviceInfo["street"],
-          generator.serviceInfo["house_number"],
-          int.parse(generator.serviceInfo["postal_code"]),
-          generator.serviceInfo["phone"],
-          generator.serviceInfo["website"],
-          generator.serviceInfo["map_coordinates"]
-        ]);
-    reviewTypeId = serviceResult.insertId;
-  }
-
-  print('Inserted row id=${reviewTypeId}');
-
-  var reviewResult = await conn.query('INSERT INTO tbl_review (header, body, ' + (generator.reviewType == 'product' ? 'product_id' : 'service_id') + ', submit_date) VALUES (?, ?, ?, ?)',
-                                      [generator.reviewTitle, review, reviewTypeId, DateTime.utc(today.year, today.month, today.day, today.hour, today.minute, today.second)]);
-  print('Inserted row id=${reviewResult.insertId}');
-
-  // Finally, close the connection
-  await conn.close();
+  await generator.storeReview(review);
 }
 
 class Generator {
@@ -142,7 +93,7 @@ class Generator {
 
       types.putIfAbsent(1, () => "The price seems to be higher than its features. However, the <review_type> is good and the most important thing that I satisfy using this <review_type>. So I give this <review_type> 5 stars.");
       types.putIfAbsent(2, () => "I am very pleased with this <review_type> and specially my dear <product_present_for_someone> loved it so much. Its features are awesome. My <product_present_for_someone> loves the <product_feature_1> and <product_feature_2> features :). So I gave 5 star rating for this <review_type>. Thank you <product_seller>.");
-      types.putIfAbsent(3, () => "I give this <review_type> 5 star rating because its good and the <product_feature_1> is <product_feature_1_adjective_1> for <product_feature_1_adjective_2_object>. Now I can enjoy <product_usage_object> with this <product_name_with_some_text>. I like this <product_name_2> and also the quality is very good. So I recommend others to buy this <review_type>.");
+      types.putIfAbsent(3, () => "I give this <review_type> a 5 star rating because its good and the <product_feature_1> is <product_feature_1_adjective_1> for <product_feature_1_adjective_2_object>. Now I can enjoy <product_usage_object> with this <product_name_with_some_text>. I like this <product_name_2> and also the quality is very good. So I recommend others to buy this <review_type>.");
 
       return types;
     });
@@ -155,7 +106,7 @@ class Generator {
           "- <product_feature_2>\n" +
           "- <product_feature_3>\n" +
           "- <product_feature_4>\n" +
-          "- Price is affordable\n" +
+          "- Price is affordable.\n" +
           "- <product_feature_5>\n\n" +
           "Considering above attractive features and multi-purpose functionalities, I like this <review_type> and give personal recommendation to buy this <review_type>.");
 
@@ -293,6 +244,8 @@ class Generator {
   }
 
   void takeProductInfo(String title, String category, String brand) {
+    print("==: Enter Product Information :==");
+
     if (title != null && title.isNotEmpty) {
       product.putIfAbsent("title", () => title);
     } else {
@@ -322,17 +275,19 @@ class Generator {
   }
 
   void takeServiceInfo(String title, String category, String providerPlatform) {
+    print("==: Enter Service Information :==");
+
     if (title != null && title.isNotEmpty) {
       service.putIfAbsent("title", () => title);
     } else {
-      print("Product Title := ");
+      print("Service Title := ");
       service.putIfAbsent("title", () => stdin.readLineSync());
     }
 
     if (category != null && category.isNotEmpty) {
       service.putIfAbsent("category", () => category);
     } else {
-      print("Product Category := ");
+      print("Service Category := ");
       service.putIfAbsent("category", () => stdin.readLineSync());
     }
 
@@ -385,4 +340,64 @@ class Generator {
     return review;
   }
 
+  Future<void> storeReview(String review) async {
+    print("#blackmahbub : storeReview");
+    // Generated Review into DB Storage
+    // Open a connection
+    final conn = await MySqlConnection.connect(ConnectionSettings(host: 'localhost',
+        port: 3306,
+        user: 'mahbubur',
+        password: 'Dark_Fantasy_2021',
+        db: 'db_DRIFT'));
+
+    print("#blackmahbub : " + conn.toString());
+
+    // Insert some data
+    int reviewTypeId;
+    if (reviewType == "product") {
+      var productResult = await conn.query(
+          'INSERT INTO tbl_product (title, price, category, brand, seller) VALUES (?, ?, ?, ?, ?)',
+          [
+            productInfo["title"],
+            double.parse(productInfo["price"]),
+            productInfo["category"],
+            productInfo["brand"],
+            productInfo["seller"]
+          ]);
+      reviewTypeId = productResult.insertId;
+    } else if (reviewType == "service") {
+      var serviceResult = await conn.query(
+          'INSERT INTO tbl_service (title, provider, provider_platform, category, street, house_number, postal_code, phone, website, map_coordinates) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          [
+            serviceInfo["title"],
+            serviceInfo["provider"],
+            serviceInfo["provider_platform"],
+            serviceInfo["category"],
+            serviceInfo["street"],
+            serviceInfo["house_number"],
+            int.parse(serviceInfo["postal_code"]),
+            serviceInfo["phone"],
+            serviceInfo["website"],
+            serviceInfo["map_coordinates"]
+          ]);
+      reviewTypeId = serviceResult.insertId;
+    }
+
+    print('Inserted row id=${reviewTypeId}');
+
+    var today = DateTime.now();
+    var reviewResult = await conn.query(
+        'INSERT INTO tbl_review (header, body, ' + (reviewType == 'product' ? 'product_id' : 'service_id') + ', submit_date) VALUES (?, ?, ?, ?)',
+        [
+            reviewTitle,
+            review,
+            reviewTypeId,
+            DateTime.utc(today.year, today.month, today.day, today.hour, today.minute, today.second)
+        ]);
+
+    print('Inserted row id=${reviewResult.insertId}');
+
+    // Finally, close the connection
+    await conn.close();
+  }
 }

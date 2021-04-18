@@ -457,6 +457,11 @@ class _VocalAssistantState extends State<VocalAssistant> {
     }
 
     text = text.trim().toLowerCase();
+
+    if (text.contains("number to")) {
+      text = text.replaceAll("number to", "number two");
+    }
+
     text = text.replaceAll("number ", "").replaceAll("one", "1")
                .replaceAll("two", "2").replaceAll("three", "3")
                .replaceAll("four", "4").replaceAll("five", "5")
@@ -479,6 +484,7 @@ class _VocalAssistantState extends State<VocalAssistant> {
     }
 
     if (request == "product") {
+      reviewGenerator.reviewType = "product";
       response = "Sir, at the moment, I need product information. Please tell me product title.";
       response = await translateText(response, locale);
       return Future.value(response);
@@ -535,7 +541,20 @@ class _VocalAssistantState extends State<VocalAssistant> {
       replacements = reviewGenerator.getReviewTemplateParameters();
 
       if (replacements.isNotEmpty) {
+        if (replacements.containsKey("<product_category>")) {
+          replacements.update("<product_category>", (value) => value = product["category"]);
+        }
+
+        if (replacements.containsKey("<product_brand_name>")) {
+          replacements.update("<product_brand_name>", (value) => value = product["brand"]);
+        }
+
         parameter = replacements.keys.elementAt(parameterIndex++);
+
+        if (parameter == "<product_category>" ||  parameter == "<product_brand_name>") {
+          parameter = replacements.keys.elementAt(parameterIndex++);
+        }
+
         parameterToDisplay = parameter.replaceAll("<", "")
                                       .replaceAll("_", " ")
                                       .replaceAll(">", "");
@@ -548,7 +567,13 @@ class _VocalAssistantState extends State<VocalAssistant> {
     if (replacements.isNotEmpty && parameterIndex < replacements.length - 1) {
       if (request.startsWith(parameterToDisplay + " is")) {
         replacements.update(parameter, (v) => v = request.split(parameterToDisplay + " is")[1].trim());
+
         parameter = replacements.keys.elementAt(parameterIndex++);
+
+        if (parameter == "<product_category>" ||  parameter == "<product_brand_name>") {
+          parameter = replacements.keys.elementAt(parameterIndex++);
+        }
+
         parameterToDisplay = parameter.replaceAll("<", "")
                                       .replaceAll("_", " ")
                                       .replaceAll(">", "");
@@ -561,12 +586,19 @@ class _VocalAssistantState extends State<VocalAssistant> {
     if (replacements.isNotEmpty && parameterIndex == replacements.length - 1) {
       if (request.startsWith(parameterToDisplay + " is")) {
         replacements.update(parameter, (v) => v = request.split(parameterToDisplay + " is")[1].trim());
+
         parameter = replacements.keys.elementAt(parameterIndex++);
+
+        if (parameter == "<product_category>" ||  parameter == "<product_brand_name>") {
+          parameter = replacements.keys.elementAt(parameterIndex++);
+        }
+
         parameterToDisplay = parameter.replaceAll("<", "")
-                                        .replaceAll("_", " ")
-                                        .replaceAll(">", "");
+                                      .replaceAll("_", " ")
+                                      .replaceAll(">", "");
         response = "Finally, please tell me $parameterToDisplay.";
         response = await translateText(response, locale);
+
         return Future.value(response);
       }
     }
@@ -575,7 +607,10 @@ class _VocalAssistantState extends State<VocalAssistant> {
       if (request.startsWith(parameterToDisplay + " is")) {
         replacements.update(parameter, (v) => v = request.split(parameterToDisplay + " is")[1].trim());
         review = reviewGenerator.generateReview(replacements);
+        print("\n------------------------------------------------\n");
+        print("Title: " + reviewGenerator.reviewTitle + "\n");
         print(review);
+        print("\n-------------------------------------------------\n");
         parameter = parameterToDisplay = '';
         parameterIndex = 0;
         response = "Thank you, Sir, for your kind cooperation. Product Review is successfully generated.";
@@ -585,8 +620,9 @@ class _VocalAssistantState extends State<VocalAssistant> {
     }
 
     if (request == "good job appreciate that") {
-      response = "My pleasure, Sir and always at your service.";
+      response = "My pleasure and always at your service.";
       response = await translateText(response, locale);
+      await reviewGenerator.storeReview(review);
       return Future.value(response);
     }
 
