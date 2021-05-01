@@ -117,9 +117,9 @@ class Generator {
       Map<int, String> types = Map<int, String>();
 
       types.putIfAbsent(1, () => "I love the <product_brand_name> brand because it maintains <review_type> quality.\n\n" +
-      "I rate this <review_type> 5 stars because these <product_name_with_some_text> has <product_feature_1> that is very <product_feature_1_adjective_1>. It is also a perfect <product_feature_2> and <product_feature_3> <product_category>.\n\n" +
+      "I rate this <review_type> 5 stars because this <product_name_with_some_text> has <product_feature_1> that is very <product_feature_1_adjective_1>. It is also a perfect <product_feature_2> and <product_feature_3> <product_category>.\n\n" +
       "When I was looking for <product_category>, I looked at this <review_type> along with other similar <review_type>s. The useful features of this <review_type> among other similar <review_type>s are its price and <product_feature_4>. The price is perfect with its brand and the outlook is smart and beautiful.\n\n" +
-      "I have been using the <product_name_2> regularly for <product_usage_day_count> days in <product_usage_environment>. Another noteable feature is <product_feature_5> and the service of the <product_name_3> is trouble-free.\n\n" +
+      "I have been using the <product_name_2> regularly for <product_usage_day_count> days in <product_usage_environment>. Another notable feature is <product_feature_5> and the service of the <product_name_3> is trouble-free.\n\n" +
       "I really like this <review_type> because it is high quality and the service is satisfactory according to the <review_type> description. Therefore, I recommend others to buy this <review_type>.");
 
       return types;
@@ -201,7 +201,7 @@ class Generator {
     review = review.replaceAll("<review_type>", this.type);
 
     print("==: Review Template :==\n$review");
-    print("==: Enter Reivew Title :==");
+    print("==: Enter Review Title :==");
 
     header = stdin.readLineSync();
     print("==: Enter Values :==");
@@ -344,6 +344,12 @@ class Generator {
     print("#blackmahbub : storeReview");
     // Generated Review into DB Storage
     // Open a connection
+    // final conn = await MySqlConnection.connect(ConnectionSettings(host: 'localhost',
+    //     port: 3306,
+    //     user: 'admin_mahbubur',
+    //     password: 'Dark_Fantasy_2021',
+    //     db: 'db_DRIFT'));
+
     final conn = await MySqlConnection.connect(ConnectionSettings(host: 'localhost',
         port: 3306,
         user: 'mahbubur',
