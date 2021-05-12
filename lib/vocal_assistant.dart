@@ -31,7 +31,7 @@ class _VocalAssistantState extends State<VocalAssistant> {
 
   ///////////////////////////////////////////////////////////
   int parameterIndex = 0;
-  String parameter = '', parameterToDisplay = '';
+  String parameter = '', parameterToDisplay = '', review = '';
   Map<String, String> product = Map<String, String>();
   Map<String, String> replacements = Map<String, String>();
   /////////////////////////////////////////////////////////////////
@@ -475,7 +475,7 @@ class _VocalAssistantState extends State<VocalAssistant> {
     request = await translateText(request, locale);
     print("#blackdiamond request $request");
 
-    String response = '', review = '';
+    String response = '';
 
     if (request == "sure go ahead") {
       response = "Thank you, Sir. Before proceed, I need some information from you. Please tell me review type (options are Product or Service).";
@@ -532,14 +532,29 @@ class _VocalAssistantState extends State<VocalAssistant> {
 
     if (request.startsWith("review title is")) {
       reviewGenerator.reviewTitle = request.split("review title is ")[1].trim();
-      response = "Thank you, to finalize the automatic review generation, I need some values for few parameters. So, Sir, may I proceed?";
+      replacements = reviewGenerator.getReviewTemplateParameters();
+
+      if (replacements.isEmpty) {
+        review = reviewGenerator.generateReview(replacements);
+        print("\n------------------------------------------------\n");
+
+        print("Title: " + reviewGenerator.reviewTitle + "\n");
+        print(review);
+
+        print("\n-------------------------------------------------\n");
+        parameter = parameterToDisplay = '';
+
+        parameterIndex = 0;
+        response = "Thank you, Sir, for your kind cooperation. Product Review is successfully generated.";
+      } else {
+        response = "Thank you, to finalize the automatic review generation, I need some values for few parameters. So, Sir, may I proceed?";
+      }
+
       response = await translateText(response, locale);
       return Future.value(response);
     }
 
     if (request == "you can continue please") {
-      replacements = reviewGenerator.getReviewTemplateParameters();
-
       if (replacements.isNotEmpty) {
         if (replacements.containsKey("<product_category>")) {
           replacements.update("<product_category>", (value) => value = product["category"]);
@@ -638,7 +653,7 @@ class _VocalAssistantState extends State<VocalAssistant> {
                 return Future.value(response);
 
       case "two":
-      case "2": reviewGenerator.templateName = "3_Paragraph";
+      case "2": reviewGenerator.templateName = "1_Paragraph";
                 response = "Ok, thank you. Then please choose Template Type from following options.\n" +
                     "For Type 1, please say 12.\n" +
                     "For Type 2, please say 22.\n" +

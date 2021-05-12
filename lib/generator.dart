@@ -272,6 +272,9 @@ class Generator {
 
     print("Product Seller :=");
     product.putIfAbsent("seller", () => stdin.readLineSync());
+
+    print("Product Marketer :=");
+    product.putIfAbsent("marketer", () => stdin.readLineSync());
   }
 
   void takeServiceInfo(String title, String category, String providerPlatform) {
@@ -344,31 +347,31 @@ class Generator {
     print("#blackmahbub : storeReview");
     // Generated Review into DB Storage
     // Open a connection
-    // final conn = await MySqlConnection.connect(ConnectionSettings(host: 'localhost',
-    //     port: 3306,
-    //     user: 'admin_mahbubur',
-    //     password: 'Dark_Fantasy_2021',
-    //     db: 'db_DRIFT'));
-
-    final conn = await MySqlConnection.connect(ConnectionSettings(host: 'localhost',
+    final conn = await MySqlConnection.connect(ConnectionSettings(host: 'db-drift.cygfsaorvowd.eu-central-1.rds.amazonaws.com',
         port: 3306,
-        user: 'mahbubur',
+        user: 'admin_mahbubur',
         password: 'Dark_Fantasy_2021',
         db: 'db_DRIFT'));
 
-    print("#blackmahbub : " + conn.toString());
+    // final conn = await MySqlConnection.connect(ConnectionSettings(host: 'localhost',
+    //     port: 3306,
+    //     user: 'mahbubur',
+    //     password: 'Dark_Fantasy_2021',
+    //     db: 'db_DRIFT'));
 
     // Insert some data
     int reviewTypeId;
     if (reviewType == "product") {
+      productInfo.putIfAbsent("marketer", () => "?");
       var productResult = await conn.query(
-          'INSERT INTO tbl_product (title, price, category, brand, seller) VALUES (?, ?, ?, ?, ?)',
+          'INSERT INTO tbl_product (title, price, category, brand, seller, marketer) VALUES (?, ?, ?, ?, ?, ?)',
           [
             productInfo["title"],
             double.parse(productInfo["price"]),
             productInfo["category"],
             productInfo["brand"],
-            productInfo["seller"]
+            productInfo["seller"],
+            productInfo["marketer"]
           ]);
       reviewTypeId = productResult.insertId;
     } else if (reviewType == "service") {
@@ -390,6 +393,8 @@ class Generator {
     }
 
     print('Inserted row id=${reviewTypeId}');
+
+    print("Before insert review: $review");
 
     var today = DateTime.now();
     var reviewResult = await conn.query(
