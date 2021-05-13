@@ -394,8 +394,6 @@ class Generator {
 
     print('Inserted row id=${reviewTypeId}');
 
-    print("Before insert review: $review");
-
     var today = DateTime.now();
     var reviewResult = await conn.query(
         'INSERT INTO tbl_review (header, body, ' + (reviewType == 'product' ? 'product_id' : 'service_id') + ', submit_date) VALUES (?, ?, ?, ?)',
