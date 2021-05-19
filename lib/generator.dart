@@ -7,7 +7,21 @@ void main() async {
   var generator = Generator();
   print("==: Review Generator :==");
 
-  generator.takeReviewType();
+  int reviewTypeId = await generator.takeReviewType();
+
+  print("Now, do you want to generate review? [yes / no]");
+  String answer = stdin.readLineSync().trim().toLowerCase();
+
+  if (answer == "no") {
+    if (reviewTypeId == 0) {
+      await generator.storeReviewType();
+    }
+    exit(0);
+  }
+
+  if (answer == "yes" && reviewTypeId == 0) {
+    reviewTypeId = await generator.storeReviewType();
+  }
 
   String templateName = generator.takeTemplateName();
   int templateType = generator.takeTemplateType(templateName);
@@ -18,7 +32,7 @@ void main() async {
   print("Title := " + generator.reviewTitle);
   print("$review\n");
 
-  await generator.storeReview(review);
+  await generator.storeReview(reviewTypeId, review);
 }
 
 class Generator {
@@ -126,9 +140,18 @@ class Generator {
     });
   }
 
-  void takeReviewType() {
+  Future<int> takeReviewType() async {
     print("==: Enter Review Type (Product or Service) :==");
     this.type = stdin.readLineSync().trim().toLowerCase();
+
+    int reviewTypeId = 0;
+    if (this.type == "product") {
+      reviewTypeId = await takeProductInfo();
+    } else if (this.type == "service") {
+      reviewTypeId = await takeServiceInfo();
+    }
+
+    return Future.value(reviewTypeId);
   }
 
   String takeTemplateName() {
@@ -220,52 +243,45 @@ class Generator {
     }
 
     replacements.forEach((key, value) => review = review.replaceAll(key, value));
-    String title, category, brand;
-
-    if (replacements.containsKey("<product_name_with_some_text>")) {
-      title = replacements["<product_name_with_some_text>"];
-    }
-
-    if (replacements.containsKey("<product_category>")) {
-      category = replacements["<product_category>"];
-    }
-
-    if (replacements.containsKey("<product_brand_name>")) {
-      brand = replacements["<product_brand_name>"];
-    }
-
-    if (this.type == "product") {
-      takeProductInfo(title, category, brand);
-    } else if (this.type == "service") {
-      takeServiceInfo(title, category, brand);
-    }
 
     return review;
   }
 
-  void takeProductInfo(String title, String category, String brand) {
+  Future<int> isProductExist(String orderNo, String title) async {
+    // Open a connection
+    final conn = await MySqlConnection.connect(ConnectionSettings(host: 'db-drift.cygfsaorvowd.eu-central-1.rds.amazonaws.com',
+        port: 3306,
+        user: 'admin_mahbubur',
+        password: 'Dark_Fantasy_2021',
+        db: 'db_DRIFT'));
+
+    int productId = 0;
+
+    // Finally, close the connection
+    await conn.close();
+
+    return Future.value(productId);
+  }
+
+  Future<int> takeProductInfo() async {
     print("==: Enter Product Information :==");
 
-    if (title != null && title.isNotEmpty) {
-      product.putIfAbsent("title", () => title);
-    } else {
-      print("Product Title := ");
-      product.putIfAbsent("title", () => stdin.readLineSync());
+    print("Product Order No :=");
+    product.putIfAbsent("order_no", () => stdin.readLineSync());
+
+    print("Product Title := ");
+    product.putIfAbsent("title", () => stdin.readLineSync());
+
+    int product_id = await isProductExist(product["order_no"], product["title"]);
+    if (product_id > 0) {
+      return Future.value(product_id);
     }
 
-    if (category != null && category.isNotEmpty) {
-      product.putIfAbsent("category", () => category);
-    } else {
-      print("Product Category := ");
-      product.putIfAbsent("category", () => stdin.readLineSync());
-    }
+    print("Product Category := ");
+    product.putIfAbsent("category", () => stdin.readLineSync());
 
-    if (brand != null && brand.isNotEmpty) {
-      product.putIfAbsent("brand", () => brand);
-    } else {
-      print("Product Brand := ");
-      product.putIfAbsent("brand", () => stdin.readLineSync());
-    }
+    print("Product Brand := ");
+    product.putIfAbsent("brand", () => stdin.readLineSync());
 
     print("Product Price :=");
     product.putIfAbsent("price", () => stdin.readLineSync());
@@ -275,34 +291,45 @@ class Generator {
 
     print("Product Marketer :=");
     product.putIfAbsent("marketer", () => stdin.readLineSync());
+
+    return Future.value(product_id);
   }
 
-  void takeServiceInfo(String title, String category, String providerPlatform) {
+  Future<int> isServiceExist(String title, String provider) async {
+    // Open a connection
+    final conn = await MySqlConnection.connect(ConnectionSettings(host: 'db-drift.cygfsaorvowd.eu-central-1.rds.amazonaws.com',
+        port: 3306,
+        user: 'admin_mahbubur',
+        password: 'Dark_Fantasy_2021',
+        db: 'db_DRIFT'));
+
+    int service_id = 0;
+
+    // Finally, close the connection
+    await conn.close();
+
+    return Future.value(service_id);
+  }
+  
+  Future<int> takeServiceInfo() async {
     print("==: Enter Service Information :==");
 
-    if (title != null && title.isNotEmpty) {
-      service.putIfAbsent("title", () => title);
-    } else {
-      print("Service Title := ");
-      service.putIfAbsent("title", () => stdin.readLineSync());
-    }
-
-    if (category != null && category.isNotEmpty) {
-      service.putIfAbsent("category", () => category);
-    } else {
-      print("Service Category := ");
-      service.putIfAbsent("category", () => stdin.readLineSync());
-    }
+    print("Service Title := ");
+    service.putIfAbsent("title", () => stdin.readLineSync());
 
     print("Provider :=");
     service.putIfAbsent("provider", () => stdin.readLineSync());
 
-    if (providerPlatform != null && providerPlatform.isNotEmpty) {
-      service.putIfAbsent("provider_platform", () => providerPlatform);
-    } else {
-      print("Provider Platform := ");
-      service.putIfAbsent("provider_platform", () => stdin.readLineSync());
+    int service_id = await isServiceExist(service["title"], service["provider"]);
+    if (service_id > 0) {
+      return Future.value(service_id);
     }
+
+    print("Service Category := ");
+    service.putIfAbsent("category", () => stdin.readLineSync());
+
+    print("Provider Platform := ");
+    service.putIfAbsent("provider_platform", () => stdin.readLineSync());
 
     print("Street :=");
     service.putIfAbsent("street", () => stdin.readLineSync());
@@ -321,6 +348,8 @@ class Generator {
 
     print("Map Coordinates :=");
     service.putIfAbsent("map_coordinates", () => stdin.readLineSync());
+
+    return Future.value(service_id);
   }
 
   Map<String, String> getReviewTemplateParameters() {
@@ -343,9 +372,9 @@ class Generator {
     return review;
   }
 
-  Future<void> storeReview(String review) async {
-    print("#blackmahbub : storeReview");
-    // Generated Review into DB Storage
+  Future<int> storeReviewType() async {
+    print("#blackmahbub : storeReviewType");
+
     // Open a connection
     final conn = await MySqlConnection.connect(ConnectionSettings(host: 'db-drift.cygfsaorvowd.eu-central-1.rds.amazonaws.com',
         port: 3306,
@@ -353,25 +382,20 @@ class Generator {
         password: 'Dark_Fantasy_2021',
         db: 'db_DRIFT'));
 
-    // final conn = await MySqlConnection.connect(ConnectionSettings(host: 'localhost',
-    //     port: 3306,
-    //     user: 'mahbubur',
-    //     password: 'Dark_Fantasy_2021',
-    //     db: 'db_DRIFT'));
-
-    // Insert some data
     int reviewTypeId;
+
     if (reviewType == "product") {
       productInfo.putIfAbsent("marketer", () => "?");
       var productResult = await conn.query(
-          'INSERT INTO tbl_product (title, price, category, brand, seller, marketer) VALUES (?, ?, ?, ?, ?, ?)',
+          'INSERT INTO tbl_product (title, price, category, brand, seller, marketer, order_no) VALUES (?, ?, ?, ?, ?, ?, ?)',
           [
             productInfo["title"],
             double.parse(productInfo["price"]),
             productInfo["category"],
             productInfo["brand"],
             productInfo["seller"],
-            productInfo["marketer"]
+            productInfo["marketer"],
+            productInfo["order_no"]
           ]);
       reviewTypeId = productResult.insertId;
     } else if (reviewType == "service") {
@@ -393,6 +417,29 @@ class Generator {
     }
 
     print('Inserted row id=${reviewTypeId}');
+
+    // Finally, close the connection
+    await conn.close();
+
+    return Future.value(reviewTypeId);
+  }
+
+  Future<void> storeReview(int reviewTypeId, String review) async {
+    print("#blackmahbub : storeReview");
+
+    // Generated Review into DB Storage
+    // Open a connection
+    final conn = await MySqlConnection.connect(ConnectionSettings(host: 'db-drift.cygfsaorvowd.eu-central-1.rds.amazonaws.com',
+        port: 3306,
+        user: 'admin_mahbubur',
+        password: 'Dark_Fantasy_2021',
+        db: 'db_DRIFT'));
+
+    // final conn = await MySqlConnection.connect(ConnectionSettings(host: 'localhost',
+    //     port: 3306,
+    //     user: 'mahbubur',
+    //     password: 'Dark_Fantasy_2021',
+    //     db: 'db_DRIFT'));
 
     var today = DateTime.now();
     var reviewResult = await conn.query(
