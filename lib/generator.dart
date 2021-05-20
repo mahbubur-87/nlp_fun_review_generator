@@ -256,6 +256,17 @@ class Generator {
         db: 'db_DRIFT'));
 
     int productId = 0;
+    title = "%$title%";
+
+    String sql = "SELECT prd.id " +
+                  " FROM tbl_product prd " +
+                  " WHERE prd.order_no = ? " +
+                  " AND LOWER(prd.title) LIKE ? ";
+    var result = await conn.query(sql, [orderNo, title]);
+
+    if (result.isNotEmpty) {
+      productId = result.first.single;
+    }
 
     // Finally, close the connection
     await conn.close();
@@ -303,14 +314,28 @@ class Generator {
         password: 'Dark_Fantasy_2021',
         db: 'db_DRIFT'));
 
-    int service_id = 0;
+    int serviceId = 0;
+
+    title = "%$title%";
+    provider = "%$provider%";
+
+    String sql = "SELECT ser.id " +
+                  " FROM tbl_service ser " +
+                  " WHERE LOWER(ser.provider) LIKE ? " +
+                  " AND LOWER(ser.title) LIKE ? ";
+
+    var result = await conn.query(sql, [title, provider]);
+
+    if (result.isNotEmpty) {
+      serviceId = result.first.single;
+    }
 
     // Finally, close the connection
     await conn.close();
 
-    return Future.value(service_id);
+    return Future.value(serviceId);
   }
-  
+
   Future<int> takeServiceInfo() async {
     print("==: Enter Service Information :==");
 
