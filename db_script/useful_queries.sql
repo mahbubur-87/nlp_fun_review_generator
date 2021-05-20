@@ -15,8 +15,8 @@ WHERE rev.accept_date IS NOT NULL;
 
 SELECT prd.id
 FROM tbl_product prd
-WHERE prd.order_no = '303-4793280-0329901'
-AND LOWER(prd.title) LIKE '%roller%';
+WHERE prd.order_no = '303-9501192-0574703'
+AND LOWER(prd.title) LIKE '%plant stand%';
 
 SELECT ser.id
 FROM tbl_service ser
