@@ -34,10 +34,9 @@ More Testing;
 -----------------------------------------------------
 
 ==: Future Plans :==
-Develop a UI-Less Mobile Application that has intelligence definitely AI-Powered automated Text generation for Product Reviews.
-Here are some future features that they will have:
+Develop a UI-Less Mobile Application(Smartphone and Smartwatch) that has intelligence definitely AI-Powered automated Text generation for Product or Service Reviews. Here are some future features that they will have:
 
-1. Voice Communication using NLP (Connected with Calendar Events and Online Shop Authentication)
+1. Voice Communication using NLP, Text Classification, Word Representation and Sentiment Analysis (Connected with Calendar Events and Online Shop Authentication)
 2. Generate and Submit Product Review from the application's knowledge base(vocabulary and product details)
 
 Example Use Case:
