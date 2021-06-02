@@ -451,7 +451,7 @@ class _VocalAssistantState extends State<VocalAssistant> {
 
   Future<String> translateText(String text, String locale) async {
     if (locale != 'en_US') {
-      Translation translation = await translator.translate(text, from: 'en', to: 'de');
+      Translation translation = await translator.translate(text, from: 'de', to: 'en');
       print("#blackdiamond translated text " + translation.toString());
       text = translation.toString();
     }

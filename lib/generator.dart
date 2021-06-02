@@ -324,7 +324,7 @@ class Generator {
                   " WHERE LOWER(ser.provider) LIKE ? " +
                   " AND LOWER(ser.title) LIKE ? ";
 
-    var result = await conn.query(sql, [title, provider]);
+    var result = await conn.query(sql, [provider, title]);
 
     if (result.isNotEmpty) {
       serviceId = result.first.single;
@@ -346,6 +346,7 @@ class Generator {
     service.putIfAbsent("provider", () => stdin.readLineSync());
 
     int service_id = await isServiceExist(service["title"], service["provider"]);
+    print("#blackdiamond " + service_id.toString());
     if (service_id > 0) {
       return Future.value(service_id);
     }
